@@ -19,9 +19,27 @@ Read `RULES.md` first. It is absolute and wins over this file.
 
 The account also has two unrelated Workers, `testproxy` and `thistle-proxy`. They were left alone.
 
-## where it stands, 2026-10-07
+## where it stands, 2026-10-08
 
-Deployed and running. On its first night it said "Lab closing in thirty minutes." at 9:30 and "fifteen minutes" at 9:45, on time. Those two went out over MQTT because the CLASP path had a bug (binary WebSocket messages arrive as a Blob in Workers, not an ArrayBuffer); fixed and checked from Cloudflare, so lines now go over CLASP with MQTT as the fallback, and the status page shows the fallback reason when it is used. The first event heads up will be Thursday's 7 PM events at 6 PM.
+Deployed, running, and verified end to end on the deer:
+
+- 2026-10-07 9:30 and 9:45 PM: the real closing warnings went out on time, over MQTT, because the CLASP path had a bug (binary WebSocket messages arrive as a Blob in Workers, not an ArrayBuffer). The deer was being power cycled around then, so they were probably not heard.
+- 10:45 PM: after the fix, a test run to a test address (`BUCK_ID=announcer-test`) went out over CLASP and arrived at a subscriber.
+- 10:55 PM: a test run aimed at the deer said "Lab closing in twenty five minutes." over CLASP, and the room heard it.
+
+Both test lines (10:44 and 10:54 in the status page history) came from temporary settings, now back to normal. The first real event heads up is Thursday 2026-10-08 at 6 PM for the 7 PM events; the status page shows whether it went over CLASP or fell back to MQTT.
+
+## testing without editing files
+
+`wrangler deploy --var` overrides a setting for one deploy without touching `wrangler.toml`. To make a closing warning fire at the next five minute run: pick a closing time that many minutes after the run, and a warning count not used today (each warning key is per date and minutes, so a used one is skipped).
+
+```
+# at 10:50, for the 10:55 run: close 11:20, warn at 25 minutes
+npx wrangler deploy --var CLOSING_TIME:23:20 --var CLOSING_WARNINGS:25
+# add --var BUCK_ID:announcer-test to keep the deer quiet and watch
+# /hackbuild/buck/announcer-test/say on wss://relay.clasp.to instead
+npx wrangler deploy        # back to the real settings
+```
 
 382 tests pass: the scanner on a synthetic calendar (EXDATE, moved and cancelled instances, all day, UTC, Denver daylight saving, folded lines), the planner's timing rules, the speech cleanup, and the direct recurrence evaluator against rrule for all 352 recurrence rules in the real feed over two years.
 
