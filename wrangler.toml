@@ -1,0 +1,31 @@
+name = "buck-announcer"
+main = "src/index.ts"
+compatibility_date = "2026-10-01"
+workers_dev = true
+
+[triggers]
+# Refresh the calendar twice an hour; check what to say every five minutes.
+# src/index.ts tells them apart by the cron string, so keep both in sync.
+crons = ["7,37 * * * *", "*/5 * * * *"]
+
+[[kv_namespaces]]
+binding = "STATE"
+id = "ca56e9fe07fe41a1bbb832ba2a566f4f"
+
+[vars]
+ICS_URL = "https://calendar.google.com/calendar/ical/heatsynclabs.org_p9rcn09d64q56m7rg07jptmrqc%40group.calendar.google.com/public/basic.ics"
+BUCK_ID = "heatsync"
+CLASP_URL = "wss://relay.clasp.to"
+MQTT_HOST = "relay.clasp.chat"
+MQTT_PORT = "1883"
+TIMEZONE = "America/Phoenix"
+LEAD_MINUTES = "60"
+CLOSING_TIME = "22:00"
+CLOSING_WARNINGS = "30,15"
+ANNOUNCE_EVENTS = "true"
+ANNOUNCE_CLOSING = "true"
+SKIP_CLOSING_DATES = ""
+ENABLED = "true"
+
+[observability]
+enabled = true
